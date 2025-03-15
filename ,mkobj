@@ -1,0 +1,20 @@
+#!/bin/sh
+#
+# ,mkobj -- make an objdir for the NetBSD build system
+#
+# usage: ,mkobj [dir]
+# Defaulting to dir to "obj".  Mark the directory as not to be backed up.
+#
+obj=${1:-obj}
+mkdir ${obj}
+
+# Mark $obj as not to be backed up.
+case $(uname -s) in
+NetBSD)
+    chflags -d nodump ${obj}
+    ;;
+Darwin)
+    tmutil addexclusion ${obj}
+    ;;
+# XXX handle Linux
+esac

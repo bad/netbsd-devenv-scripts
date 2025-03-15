@@ -29,6 +29,10 @@ command line options to simplify often used QEMU incantations.
 
 Run it with the `-h` or `--help` options to print the usage message.
 
+### ,mkobj
+Create a NetBSD build system OBJDIR (default "obj") and mark it as not to be
+backuped.
+
 ### ,yymmdd
 Outputs the current date in YYMMDD format -- shorter and
 faster to type than `date +%y%m%d`.
