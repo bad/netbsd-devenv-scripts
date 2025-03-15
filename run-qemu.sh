@@ -57,7 +57,7 @@ while [ $# -ge 1 ]; do
 	    shift; break	# no more options
 	    ;;
 	-n)
-	    dryrun=echo; shift
+	    dryrun=: ; shift
 	    ;;
 	-v | --verbose)
 	    verbose=true; shift;
