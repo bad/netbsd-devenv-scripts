@@ -165,7 +165,7 @@ qemucmd="qemu-system-x86_64 -M q35 -cpu host -accel $accel
 
 if [ ! -f ${vmrootfile} ]; then
     run qemu-img create -f qcow2 ${vmrootfile} ${vmrootsz} ||
-	err 1 "error creating ${vmrootfile}: $!"
+	err 1 "error creating ${vmrootfile}: $?"
 fi
 
 run $qemucmd "$@"
