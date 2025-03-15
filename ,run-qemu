@@ -1,6 +1,25 @@
 #!/bin/sh
 #
-# run-qemu.sh -- run the netbsd vm with qemu.
+# ,run-qemu -- run a netbsd vm with qemu.
+#
+# command line flags and options
+#   -h | --help 	- print usage message and exit
+#   -n 			- dry run: print the commands that would run but do not execute them
+#   -v | --verbose 	- show actual commands being run
+#   -c [nographic|curses|serial]
+#   			- select console.  default: serial
+#   --root-image file 	- use 'file' as root image
+#   --root-size size 	- create root image with size 'size' e.g. 10g
+#   --iso-image file 	- use 'file' as image for CD-ROM
+#   -m | --mem size 	- allocate 'size" RAM to the VM
+#   --ssh 		- forward localhost port 2022 to port 22 so ssh works
+#   --fsdev dir[,(ro|rw}] - make directory 'dir' available via 9P, default: rw
+#   -- 			- stop option processing and pass remaining arguments to qemu
+#
+# exit status:
+#  - 1 for errors running commands or missing files/directories
+#  - 2 for missing arguments to command line options
+#  - 3 when 'usage' was invoked
 #
 set -eu
 
