@@ -66,8 +66,14 @@ export TD=${PWD}
 
 Then run `direnv allow` allow in the top-level directory.
 
-## History
+## Why the commas?
+In short:
+  - they don't conflict with system commands
+  - command completion: typing ",TAB" makes them easily discoverable
 
+Thanks to [Brandon Rhodes](https://rhodesmill.org/brandon/2009/commands-with-comma/).
+
+## History
 I created `,run-build.sh` years ago to so that I don't have to type or paste
 in the common arguments to `build.sh` over and over again.
 
