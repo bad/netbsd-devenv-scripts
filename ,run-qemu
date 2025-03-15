@@ -34,7 +34,7 @@ esac
 
 usage() {
     cat 1>&2 <<EOF
-usage: $0 [-n] [-v | --verbose] [-c [nographic|curses|serial]] [--root-image file] [--root-size sz] [--iso-image file] [[-m|--mem] size] [--ssh] [--fsdev dir[,ro|rw]]... [--] [ qemu-options]
+usage: $0 [-h | --help ] [-n] [-v | --verbose] [-c [nographic|curses|serial]] [--root-image file] [--root-size sz] [--iso-image file] [[-m|--mem] size] [--ssh] [--fsdev dir[,ro|rw]]... [--] [ qemu-options]
 EOF
     exit 3
 }
@@ -55,6 +55,9 @@ while [ $# -ge 1 ]; do
     case "$1" in
 	--)
 	    shift; break	# no more options
+	    ;;
+	-h | --help)
+	    usage		# exits
 	    ;;
 	-n)
 	    dryrun=: ; shift
