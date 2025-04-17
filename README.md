@@ -1,4 +1,4 @@
-# netbsd-gsoc-scripts
+# netbsd-devenv-scripts
 
 Support scripts for my NetBSD development environment.
 Initially made public to help my 2024 Google Summer of Code student to
