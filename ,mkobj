@@ -11,7 +11,7 @@ mkdir ${obj}
 # Mark $obj as not to be backed up.
 case $(uname -s) in
 NetBSD)
-    chflags -d nodump ${obj}
+    chflags nodump ${obj}
     ;;
 Darwin)
     tmutil addexclusion ${obj}
