@@ -2,7 +2,7 @@
 #
 # ,run-qemu -- run a netbsd vm with qemu.
 #
-# command line flags and options
+# command line flags and options:
 #   -h | --help 	- print usage message and exit
 #   -n 			- dry run: print the commands that would run but do not execute them
 #   -v | --verbose 	- show actual commands being run
