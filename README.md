@@ -39,7 +39,7 @@ faster to type than `date +%y%m%d`.
 
 ## Setup
 
-# Directory layout
+### Directory layout
 The scripts assumes that you keep your NetBSD source tree(s), obj
 directories, and other directories used by these scripts under a top-level
 directory, e.g. "~/work/netbsd/".
@@ -56,7 +56,7 @@ The directory layout is:
 	\ vm		- holds the VM images and installation ISOs
 ```
 
-## direnv setup
+### direnv setup
 
 Create `.envrc` in your top-level directory with the following contents:
 
