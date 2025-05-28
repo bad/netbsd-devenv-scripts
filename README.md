@@ -23,6 +23,8 @@ Usage: `,run-build.sh MACHINE [build.sh-options...]`
 
 `MACHINE` is one of the MACHINE values that `build.sh list-arch` prints.
 
+`,run-build.sh` places the `obj` directory into directory defined by the `TD` environment variable.  See the section on direnv setup below.
+
 ### ,run-qemu
 Runs NetBSD in a QEMU VM.  It has sensible defaults.  It has
 command line options to simplify often used QEMU incantations.
@@ -69,6 +71,10 @@ export TD=${PWD}
 ```
 
 Then run `direnv allow` allow in the top-level directory.
+
+If you want to put the `obj` directory below the `src` directory,
+e.g., because you are working with multiple trees, then create a `.envrc` in
+the `src` directory with just the last two lines from the above file.
 
 ## Why the commas?
 In short:
