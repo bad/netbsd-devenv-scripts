@@ -66,12 +66,12 @@ EOF
 
 err() {
     code=$1; shift
-    echo "$@" 1>&2
+    echo 1>&2  "$@"
     exit ${code}
 }
 
 run() {
-    ${verbose} && echo "$@" 1>&2
+    ${verbose} && echo 1>&2 "$@"
     ${dryrun} "$@"
 }
 
@@ -152,7 +152,7 @@ while [ $# -ge 1 ]; do
 	    fsdev="$fsdev -fsdev local,id=${tag},security_model=none,path=${dir}${roflag} -device virtio-9p-pci,fsdev=${tag},mount_tag=${tag}"
 	    ;;
 	*)
-	    echo "unkown option: $1" 1>&2
+	    echo 1>&2 "unkown option: $1"
 	    usage
 	    ;;
     esac

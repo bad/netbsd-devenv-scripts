@@ -2,7 +2,7 @@
 #
 # ,run-build.sh -- run build.sh with sensible defaults
 #
-[ $# -lt 2 ] && { echo "usage: $0 machine args..." 1>2; exit 1; }
+[ $# -lt 2 ] && { echo 1>&2 "usage: $0 machine args..."; exit 1; }
 scriptname="$(basename $0)"
 # log the invocation.  note the TAB
 echo "$(date +%FT%T)	${scriptname}" "$@" >> "${scriptname}.log"
