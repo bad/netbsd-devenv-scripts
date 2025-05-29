@@ -66,7 +66,7 @@ Create `.envrc` in your top-level directory with the following contents:
 PATH_add scripts
 PATH_add obj/tools/bin
 export CVS_RSH=ssh
-# TOPDIR
+# TOPDIR where ,run-build.sh expects the `obj' directory
 export TD=${PWD}
 # select default version of root and iso image for ,run-qemu
 # export NBVERS=10.99.14
