@@ -42,6 +42,11 @@ case `uname -s` in
 	;;
     Darwin)
 	accel=hvf
+	# QEMU 10.0.0 -smp N breaks netbsd for N!=1
+	if [ $(uname -m) = x86_64 ] &&
+	       qemu-img --version | fgrep 'version 10.0.0' >/dev/null 2>&1 ; then
+	    numcpu=1
+	fi
 	;;
     NetBSD)
 	accel=nvmm
