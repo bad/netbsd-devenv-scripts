@@ -8,6 +8,7 @@
 #   -v | --verbose 	- show actual commands being run
 #   -c [nographic|curses|serial]
 #   			- select console.  default: serial
+#   --nbvers vers 	- use 'vers' as root and iso image version. c.f. NBVERS
 #   --root-image file 	- use 'file' as root image
 #   --root-size size 	- create root image with size 'size' e.g. 10g
 #   --iso-image file 	- use 'file' as image for CD-ROM
@@ -15,6 +16,10 @@
 #   --ssh 		- forward localhost port 2022 to port 22 so ssh works
 #   --fsdev dir[,(ro|rw}] - make directory 'dir' available via 9P, default: rw
 #   -- 			- stop option processing and pass remaining arguments to qemu
+#
+# environment
+# NBVERS 	if set overrides the default root and iso image version.
+# 		--nbvers takes precedence, however.
 #
 # exit status:
 #  - 1 for errors running commands or missing files/directories
@@ -25,13 +30,14 @@ set -eu
 
 dryrun=
 verbose=false
-nbvers=10.1
+nbvers=${NBVERS:-10.1}
 memsz=2g
 numcpu=2
 pfx=vm
 vmrootsz=10g
-vmrootfile=${pfx}/netbsd-${nbvers}-root
-isoimage=${pfx}/NetBSD-${nbvers}-amd64.iso
+# vmroot and isoimage will be expanded later
+vmroot='${pfx}/netbsd-${nbvers}-root'
+isoimage='${pfx}/NetBSD-${nbvers}-amd64.iso'
 hostfwdssh=",hostfwd=tcp:127.1:2222-:22"
 console="-display none -serial mon:stdio"
 fsdev=""
@@ -59,7 +65,7 @@ esac
 
 usage() {
     cat 1>&2 <<EOF
-usage: $0 [-h | --help ] [-n] [-v | --verbose] [-c [nographic|curses|serial]] [--root-image file] [--root-size sz] [--iso-image file] [[-m|--mem] size] [--ssh] [--fsdev dir[,ro|rw]]... [--] [ qemu-options]
+usage: $0 [-h | --help ] [-n] [-v | --verbose] [-c [nographic|curses|serial]] [--nbvers vers] [--root-image file] [--root-size sz] [--iso-image file] [[-m|--mem] size] [--ssh] [--fsdev dir[,ro|rw]]... [--] [ qemu-options]
 EOF
     exit 3
 }
@@ -109,10 +115,15 @@ while [ $# -ge 1 ]; do
 	    esac
 	    shift
 	    ;;
+	--nbvers)
+	    shift
+	    [ $# -ge 1 ] || err 2 "--nbvers requires a version argument"
+	    nbvers=$1; shift
+	    ;;
 	--root-image)
 	    shift
 	    [ $# -ge 1 ] || err 2 "--root-image requires a file name argument"
-	    vmrootfile=$1; shift
+	    vmroot=$1; shift
 	    ;;
 	--root-size)
 	    shift
@@ -158,13 +169,16 @@ while [ $# -ge 1 ]; do
     esac
 done
 
+eval vmrootfile="$vmroot" \; isoimagefile="$isoimage"
+
 qemucmd="qemu-system-x86_64 -M q35 -cpu host -accel $accel
     -smp ${numcpu} -m ${memsz}
     -device virtio-rng,rng=rng0
     -object rng-random,id=rng0,filename=/dev/urandom
     -nic user,model=virtio-net-pci${fwdssh:+$hostfwdssh}
     -drive if=ide,index=0,id=wd0,media=disk,file=${vmrootfile}
-    -cdrom ${isoimage}
+    -cdrom ${isoimagefile}
+    ${vmkernel}
     ${fsdev}
     ${console}"
 

@@ -68,6 +68,8 @@ PATH_add obj/tools/bin
 export CVS_RSH=ssh
 # TOPDIR
 export TD=${PWD}
+# select default version of root and iso image for ,run-qemu
+# export NBVERS=10.99.14
 ```
 
 Then run `direnv allow` allow in the top-level directory.
