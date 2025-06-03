@@ -78,7 +78,7 @@ err() {
 
 run() {
     ${verbose} && echo 1>&2 "$@"
-    ${dryrun} "$@"
+    eval ${dryrun} $@
 }
 
 # parse args
