@@ -12,6 +12,7 @@
 #   --root-image file 	- use 'file' as root image
 #   --root-size size 	- create root image with size 'size' e.g. 10g
 #   --iso-image file 	- use 'file' as image for CD-ROM
+#   -k kernel 		- directly load kernel; implies serial console
 #   -m | --mem size 	- allocate 'size" RAM to the VM
 #   --ssh 		- forward localhost port 2022 to port 22 so ssh works
 #   --fsdev dir[,(ro|rw}] - make directory 'dir' available via 9P, default: rw
@@ -39,8 +40,10 @@ vmrootsz=10g
 vmroot='${pfx}/netbsd-${nbvers}-root'
 isoimage='${pfx}/NetBSD-${nbvers}-amd64.iso'
 hostfwdssh=",hostfwd=tcp:127.1:2222-:22"
-console="-display none -serial mon:stdio"
+serialcons="-display none -serial mon:stdio"
+console="$serialcons"
 fsdev=""
+kernel=""
 
 case `uname -s` in
     Linux)
@@ -65,7 +68,7 @@ esac
 
 usage() {
     cat 1>&2 <<EOF
-usage: $0 [-h | --help ] [-n] [-v | --verbose] [-c [nographic|curses|serial]] [--nbvers vers] [--root-image file] [--root-size sz] [--iso-image file] [[-m|--mem] size] [--ssh] [--fsdev dir[,ro|rw]]... [--] [ qemu-options]
+usage: $0 [-h | --help ] [-n] [-v | --verbose] [-c [nographic|curses|serial]] [--nbvers vers] [--root-image file] [--root-size sz] [--iso-image file] [-k kernel] [[-m|--mem] size] [--ssh] [--fsdev dir[,ro|rw]]... [--] [ qemu-options]
 EOF
     exit 3
 }
@@ -135,6 +138,10 @@ while [ $# -ge 1 ]; do
 	    [ $# -ge 1 ] || err 2 "--iso-image requires a file name argument"
 	    isoimage="$1"; shift
 	    ;;
+	-k)
+	    shift
+	    kernel=$1; shift
+	    ;;
 	-m | --mem)
 	    shift
 	    [ $# -ge 1 ] || err 2 "-m | --mem requires a size argument"
@@ -170,6 +177,11 @@ while [ $# -ge 1 ]; do
 done
 
 eval vmrootfile="$vmroot" \; isoimagefile="$isoimage"
+
+if [ -n "$kernel" ]; then
+    vmkernel="-kernel $kernel -append 'root=dk0 console=com'"
+    console="$serialcons"	# force serial console
+fi
 
 qemucmd="qemu-system-x86_64 -M q35 -cpu host -accel $accel
     -smp ${numcpu} -m ${memsz}
