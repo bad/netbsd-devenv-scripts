@@ -110,7 +110,7 @@ while [ $# -ge 1 ]; do
 		    console="-display curses"
 		    ;;
 		serial)
-		    console="-display none -serial mon:stdio"
+		    console="$serialcons"
 		    ;;
 		*)
 		    err 2 "unknown console option '$1'"
