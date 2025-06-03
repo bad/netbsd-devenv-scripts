@@ -34,7 +34,6 @@ verbose=false
 nbvers=${NBVERS:-10.1}
 memsz=2g
 numcpu=2
-pfx=vm
 vmrootsz=10g
 # vmroot and isoimage will be expanded later
 vmroot='${pfx}/netbsd-${nbvers}-root'
@@ -44,6 +43,12 @@ serialcons="-display none -serial mon:stdio"
 console="$serialcons"
 fsdev=""
 kernel=""
+
+# Also look in the parent directory for the vm directory, in case ,run-qemu
+# was run in a "src" directory.
+for pfx in vm ../vm; do
+    [ -d "$pfx" ] && break
+done
 
 case `uname -s` in
     Linux)
