@@ -160,14 +160,14 @@ while [ $# -ge 1 ]; do
 	    shift
 	    [ $# -ge 1 ] || err 2 "-m | --fsdev requires a directory name"
 
+	    dir="${1%%,*}"	# everything from ',' on
+	    [ ! -d "$dir" ] && err 1 "directory $dir doesn't exist"
+
 	    roflag=$(expr "$1" : '.*,\(r[ow]\)$' || true)
 	    case ${roflag:-rw} in # default to read-write as qemu does
 		ro) roflag=",readonly=on";;
 		rw) roflag=;;
 	    esac
-
-	    dir=$(echo "$1"| sed -e 's/,.*//') # strip everything from ',' on
-	    [ ! -d "$dir" ] && err 1 "directory $dir doesn't exist"
 
 	    shift
 
