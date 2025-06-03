@@ -184,6 +184,19 @@ done
 eval vmrootfile="$vmroot" \; isoimagefile="$isoimage"
 
 if [ -n "$kernel" ]; then
+    # When $kernel doesn't exist and there is no '/' in $kernel, try to
+    # locate it in "standard" locations.
+    if [ ! -r "$kernel" -a  "${kernel#*/}" = "$kernel" ]; then
+	for k in "obj/obj.amd64/sys/arch/amd64/compile/$kernel/netbsd" \
+		 "src/sys/arch/amd64/compile/$kernel/netbsd"
+	do
+	    if [ -f "$k" ]; then
+		kernel="$k"
+		echo 1>&2 "${0##*/}: using kernel $k"
+		break
+	    fi
+	done
+    fi
     vmkernel="-kernel $kernel -append 'root=dk0 console=com'"
     console="$serialcons"	# force serial console
 fi
