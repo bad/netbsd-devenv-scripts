@@ -15,7 +15,8 @@
 #   -k kernel 		- directly load kernel; implies serial console
 #   -m | --mem size 	- allocate 'size" RAM to the VM
 #   --ssh 		- forward localhost port 2022 to port 22 so ssh works
-#   --fsdev dir[,(ro|rw}] - make directory 'dir' available via 9P, default: rw
+#   --fsdev [dir][:tag][,(ro|rw}] - make directory 'dir' available via 9P,
+#			default to PWD:$(basename PWD),rw
 #   -- 			- stop option processing and pass remaining arguments to qemu
 #
 # environment
@@ -75,7 +76,7 @@ esac
 
 usage() {
     cat 1>&2 <<EOF
-usage: $0 [-h | --help ] [-n] [-v | --verbose] [-c [nographic|curses|serial]] [--nbvers vers] [--root-image file] [--root-size sz] [--iso-image file] [-k kernel] [[-m|--mem] size] [--ssh] [--fsdev dir[,ro|rw]]... [--] [ qemu-options]
+usage: $0 [-h | --help ] [-n] [-v | --verbose] [-c [nographic|curses|serial]] [--nbvers vers] [--root-image file] [--root-size sz] [--iso-image file] [-k kernel] [[-m|--mem] size] [--ssh] [--fsdev [dir][:tag][,ro|rw]]... [--] [ qemu-options]
 EOF
     exit 3
 }
@@ -162,7 +163,9 @@ while [ $# -ge 1 ]; do
 	    shift
 	    [ $# -ge 1 ] || err 2 "-m | --fsdev requires a directory name"
 
-	    dir="${1%%,*}"	# everything from ',' on
+	    dir="${1%%[,:]*}"	# Strip everything from '[,:]' on.
+	    : ${dir:=.}	# If $dir is empty set it to "." with special meaning.
+
 	    [ ! -d "$dir" ] && err 1 "directory $dir doesn't exist"
 
 	    roflag=$(expr "$1" : '.*,\(r[ow]\)$' || true)
@@ -171,9 +174,18 @@ while [ $# -ge 1 ]; do
 		rw) roflag=;;
 	    esac
 
+	    # Extract tag if any.
+	    tag=$(expr "$1" : '.*:\([^,]*\)' || true)
+	    # Use a sensible tag if dir is ".".  The convention is to use
+	    # "src-branch" as src directory names.
+	    if [ "$dir" = . -a -z "$tag" ]; then
+		tag=$(basename "$PWD" | sed -e '/src/s/-.*//')
+	    fi
+	    # If tag is still empty...
+	    tag=${tag:-$(basename "$dir")}
+
 	    shift
 
-	    tag=$(basename "$dir")
 	    fsdev="$fsdev -fsdev local,id=${tag},security_model=none,path=${dir}${roflag} -device virtio-9p-pci,fsdev=${tag},mount_tag=${tag}"
 	    ;;
 	*)
